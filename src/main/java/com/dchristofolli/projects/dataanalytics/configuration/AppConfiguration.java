@@ -9,4 +9,14 @@ public class AppConfiguration {
     public String string() {
         return "";
     }
+
+    @Bean
+    public Integer integer(){
+        return 0;
+    }
+
+    @Bean
+    public Double aDouble(){
+        return 0.0;
+    }
 }

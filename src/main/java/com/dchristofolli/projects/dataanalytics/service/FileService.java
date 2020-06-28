@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,6 +24,12 @@ public class FileService {
 //    private final String homePath;
     private final File homePath = new File("/home/daniel/data");
     private final File folder = new File(homePath + "/in");
+    private Integer totalCustomer = 0;
+    private Integer totalSalesMan = 0;
+    private Double mostExpensiveSaleValue = 0.0;
+    private Double cheapestSaleValue = 0.0;
+    private String mostExpensiveSale = "";
+    private String worstSalesman = "";
 
     @Scheduled(fixedDelay = 1000)
     public void run() {
@@ -77,13 +85,41 @@ public class FileService {
     private void readFile(File file) {
         try {
             List<String> allLines = Files.readAllLines(Paths.get(file.getAbsolutePath()));
-            allLines.forEach(log::info);
+            allLines.parallelStream()
+                    .forEach(this::dataAnalysis);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        log.info("Total salesman: {}\nTotal customers: {}", totalSalesMan, totalCustomer);
     }
 
-    public void dataTypeChecker(String data) {
-        log.info("Type is {}", data.substring(0, 3));
+    private String dataTypeChecker(String data) {
+        return data.substring(0, 3);
+    }
+
+    private void dataAnalysis(String line) {
+        String type = dataTypeChecker(line);
+        if (type.equals("001"))
+            totalSalesMan += 1;
+        if (type.equals("002"))
+            totalCustomer += 1;
+        if (type.equals("003")) {
+            getPrices(line);
+        }
+    }
+
+    private void getPrices(String line) {
+        String value = line.substring(line.indexOf('[') + 1, line.indexOf(']'));
+        value = value.replace(',', '-');
+        String[] prices = value.split("-");
+        double sum = 0.0;
+        for (String val : prices
+        ) {
+            double v = Double.parseDouble(val);
+            sum += v;
+        }
+        if(sum > mostExpensiveSaleValue)
+            mostExpensiveSale = line.substring(4,6);
+//        if(sum < cheapestSaleValue)
     }
 }
