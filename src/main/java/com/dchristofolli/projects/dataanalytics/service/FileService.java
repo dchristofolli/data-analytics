@@ -10,8 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -112,14 +110,25 @@ public class FileService {
         String value = line.substring(line.indexOf('[') + 1, line.indexOf(']'));
         value = value.replace(',', '-');
         String[] prices = value.split("-");
-        double sum = 0.0;
+        double saleValue = 0.0;
+        String salesman = line.substring(line.lastIndexOf('ç') + 1);
         for (String val : prices
         ) {
             double v = Double.parseDouble(val);
-            sum += v;
+            saleValue += v;
         }
-        if(sum > mostExpensiveSaleValue)
-            mostExpensiveSale = line.substring(4,6);
-//        if(sum < cheapestSaleValue)
+        checkMostExpansiveSale(line, saleValue);
+        checkWorstSalesman(saleValue, salesman);
+    }
+
+    private void checkWorstSalesman(double saleValue, String salesman) {
+        if (saleValue < cheapestSaleValue)
+            worstSalesman = salesman;
+    }
+
+    private void checkMostExpansiveSale(String line, double sum) {
+        String saleId = line.substring(4, 6);
+        if (sum > mostExpensiveSaleValue)
+            mostExpensiveSale = saleId;
     }
 }
