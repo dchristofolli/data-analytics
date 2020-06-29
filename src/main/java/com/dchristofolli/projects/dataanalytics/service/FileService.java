@@ -21,17 +21,18 @@ public class FileService {
     //    @Value("${homepath}")
 //    private final String homePath;
     private final File homePath = new File("/home/daniel/data");
-    private final File folder = new File(homePath + "/in");
+    private final File inFolder = new File(homePath + "/in");
+    private final File outFolder = new File(homePath + "/out");
     private Integer totalCustomer = 0;
     private Integer totalSalesMan = 0;
-    private Double mostExpensiveSaleValue = 0.0;
-    private Double cheapestSaleValue = 0.0;
-    private String mostExpensiveSale = "";
-    private String worstSalesman = "";
+    private static Double mostExpensiveSaleValue = 0.0;
+    private static Double cheapestSaleValue = 0.0;
+    private static String mostExpensiveSale = "";
+    private static String worstSalesman = "";
 
     @Scheduled(fixedDelay = 1000)
     public void run() {
-        findFilesInFolderAndSubFolders(folder);
+        findFilesInFolderAndSubFolders(inFolder);
     }
 
     private void findFilesInFolderAndSubFolders(File structure) {
@@ -39,8 +40,6 @@ public class FileService {
             if (file.isDirectory())
                 findFilesInFolderAndSubFolders(file);
             else {
-                log.info(file.getName());
-//                dataTypeChecker(readFile(file));
                 readFile(file);
                 makeDirectory();
                 if (!moveFile(file))
@@ -60,25 +59,6 @@ public class FileService {
             log.info("Folder already exists");
         return file;
     }
-
-//    private String readFile(File file) {
-//        List<String> data = new ArrayList<>();
-//        String line = "";
-//        long length = 0;
-//        try {
-//            InputStream inputStream = new FileInputStream(file);
-//            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-//            while ((line = br.readLine()) != null) {
-//                data.add(br.readLine());
-//                length += line.length();
-//            }
-//            line = br.readLine();
-//        } catch (IOException e) {
-//            log.error(e.getMessage());
-//        }
-//        log.info(String.valueOf(data));
-//        return line;
-//    }
 
     private void readFile(File file) {
         try {
@@ -130,5 +110,10 @@ public class FileService {
         String saleId = line.substring(4, 6);
         if (sum > mostExpensiveSaleValue)
             mostExpensiveSale = saleId;
+    }
+
+    private void createFile(File file) {
+//        File outputFile = new File(outFolder + File.pathSeparator +  file.getName() + ".done.dat");
+        String data = "";
     }
 }
